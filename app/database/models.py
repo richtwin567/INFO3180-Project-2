@@ -1,7 +1,8 @@
 from app import  db
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
-from dataclasses import dataclass
+
+""" The database models """
 
 class Users(db.Model):
     __tablename__ = "users"
@@ -121,14 +122,6 @@ class Cars(db.Model):
         db.Integer,
         db.ForeignKey("users.id")
     )
-
-    # relationships
-
-    user = db.relationship(
-        "Users",
-        cascade="all, delete",
-        backref="cars"
-    )
     
     def __init__(self,description,make,model,colour,year,transmission,car_type,price,photo,user_id):
         self.description = description
@@ -165,9 +158,3 @@ class Favourites(db.Model):
     def __init__(self, car_id, user_id):
         self.car_id = car_id
         self.user_id = user_id
-
-
-
-""" user = Users("arich", "lol", "test@gamil.com", "placer", "Anakai Richards", "pass1", "photo")
-db.session.add(user)
-db.session.commit() """
