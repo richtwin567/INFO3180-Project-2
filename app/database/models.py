@@ -1,6 +1,7 @@
 from app import  db
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+from dataclasses import dataclass
 
 class Users(db.Model):
     __tablename__ = "users"
@@ -165,3 +166,8 @@ class Favourites(db.Model):
         self.car_id = car_id
         self.user_id = user_id
 
+
+
+""" user = Users("arich", "lol", "test@gamil.com", "placer", "Anakai Richards", "pass1", "photo")
+db.session.add(user)
+db.session.commit() """

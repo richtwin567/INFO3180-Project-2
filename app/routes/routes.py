@@ -1,16 +1,20 @@
-from operator import and_, or_
-
+from operator import and_
+import os
+from sqlalchemy.orm import query
 from werkzeug.exceptions import HTTPException
 from app.forms.forms import NewCarForm
 from app.database.models import Users, Cars, Favourites
 from app import app, db
-from flask import request, jsonify, g, make_response, abort
+from flask import json, request, jsonify, g, make_response, abort
 import jwt
 import datetime
 from jwt.exceptions import ExpiredSignatureError, DecodeError, InvalidSignatureError
 from psycopg2 import DatabaseError
-
+from app.database.serializers import UserSerializer, FavouritesSerializer, CarsSerializer
+from werkzeug.utils import secure_filename
 from functools import wraps
+# should be removed when api testing is complete
+from flask_wtf.csrf import generate_csrf
 
 def generate_token():
     # 
@@ -33,16 +37,16 @@ def token_required(f):
         auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None)
 
         if not auth:
-            return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
+            return jsonify({'message': 'Authorization header is expected'}), 401
 
         parts = auth.split()
 
         if parts[0].lower() != 'bearer':
-            return jsonify({'code': 'invalid_header', 'description': 'Authorization header must start with Bearer'}), 401
+            return jsonify({'message': 'Authorization header must start with Bearer'}), 401
         elif len(parts) == 1:
-            return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
+            return jsonify({'message': 'Token not found'}), 401
         elif len(parts) > 2:
-            return jsonify({'code': 'invalid_header', 'description': 'Authorization header must be Bearer + \s + token'}), 401
+            return jsonify({'message': 'Authorization header must be Bearer + \s + token'}), 401
 
         token = parts[1]
         try:
@@ -50,6 +54,9 @@ def token_required(f):
                 'SECRET_KEY'), algorithms="HS256")
             # may be changed when auth is complete
             current_user = Users.query.get(data.get('user_id'))
+            
+            if not current_user:
+                abort(make_response({"message":"Token is invalid"},401))
 
         except InvalidSignatureError:
             abort(make_response({"message": 'Token is invalid'}, 401))
@@ -85,22 +92,24 @@ def logout():
 @token_required
 def handle_cars():
     if request.method == "GET":
-        res = Cars.query.all()
-        if res:
+        query_res = Cars.query.all()
+        print(query_res)
+        if query_res:
+            res = CarsSerializer(many=True).dump(query_res)
             return jsonify(res), 200
         else:
             return jsonify({"message" : "No cars in the database"}),404
     else:
         form = NewCarForm()
-        if form.validate_on_submit():
+        # should be deleted 
+        # form.csrf_token.data = generate_csrf()
+        if form.validate():
             
             try:
-                d = form.__dict__()
-                print(d)
                 make = form.make.data
                 model = form.model.data
                 photofile = form.photo.data
-                filename = photofile.filename
+                filename = secure_filename(photofile.filename)
                 transmission = form.transmission.data
                 colour =form.colour.data
                 price = form.price.data
@@ -108,6 +117,8 @@ def handle_cars():
                 description = form.description.data
                 car_type = form.car_type.data
                 
+                full_path =os.path.join(os.getcwd(), app.config.get("UPLOAD_FOLDER"), filename)
+                photofile.save(full_path)
                 # may be changed when auth is complete
                 user_id = g.current_user.id
                 
@@ -115,23 +126,28 @@ def handle_cars():
                 
                 db.session.add(new_car)
                 db.session.commit()
-                return jsonify({"message":"the car was added successfully"}),201
+                return jsonify({"message":"The car was added successfully"}),201
             except Exception as e:
                 return jsonify({"message" : str(e)}),500
         else:
-            return jsonify({"message":"invalid form data"}),400
+            errs =[]
+            for field ,err in form.errors.items():
+                errs += [{"field":field, "messages":err}]
+                
+            return jsonify({"message":"invalid form data", "errors":errs}),400
 
-@app.route("/api/cars/<car_id>", methods=["GET"])
+@app.route("/api/cars/<int:car_id>", methods=["GET"])
 @token_required
 def get_one_car(car_id):
-    res = Cars.query.get(car_id)
-    if res:
+    query_res = Cars.query.get(car_id)
+    if query_res:
+        res = CarsSerializer().dump(query_res)
         return jsonify(res),200
     else:
         return jsonify({"message": "The requested car does not exist"}),404
 
 
-@app.route("/api/cars/<car_id>/favourite", methods=["POST"])
+@app.route("/api/cars/<int:car_id>/favourite", methods=["POST"])
 @token_required
 def add_fav_car(car_id):    
     car = Cars.query.get(car_id)
@@ -148,54 +164,61 @@ def add_fav_car(car_id):
         return jsonify({"message": "The requested car does not exist"}),404
         
 
-
 @app.route("/api/search", methods=["GET"])
 @token_required
 def search():
     make = request.args.get("make")
     model = request.args.get("model")
     
-    res = None
+    query_res = None
     
     if make and model:
-        res = Cars.query.filter(and_(Cars.make.like(make), Cars.model.like(model)))
+        query_res = Cars.query.filter(and_(Cars.make.ilike(f"%{make}%"), Cars.model.ilike(f"%{model}%"))).all()
     elif make:
-        res = Cars.query.filter(Cars.make.like(make))
+        query_res = Cars.query.filter(Cars.make.ilike(f"%{make}%")).all()
     elif model:
-        res = Cars.query.filter(Cars.model.like(model))
+        query_res = Cars.query.filter(Cars.model.ilike(f"%{model}%")).all()
     else:
-        res = Cars.query.all()
+        query_res = Cars.query.all()
         
-    return jsonify(res or []),200
+    if query_res:
+        res = CarsSerializer(many=True).dump(query_res)
+        return jsonify(res),200
+    else:
+        return jsonify({"message":"No cars found"}),404
+        
+        
 
 
-@app.route("/api/users/<user_id>", methods=["GET"])
+@app.route("/api/users/<int:user_id>", methods=["GET"])
 @token_required
 def get_user_details(user_id):
     user = g.current_user
     
     if user.id == user_id:
-        res = Users.guery.get(user_id)
-        if res:
+        query_res = Users.query.get(user_id)
+        if query_res:
+            res = UserSerializer().dump(query_res)
             return jsonify(res),200
         else:
             return jsonify({"message":" The requested user does not exist"}),404
     else:
         return jsonify({"message" : "users only have access to their own profile"}),401
 
-@app.route("/api/users/<user_id>/favourites")
+@app.route("/api/users/<int:user_id>/favourites", methods=["GET"])
 @token_required
 def get_favourite_cars(user_id):
     user = g.current_user
     
     if user.id == user_id:
-        res = Users.filter_by(id=user_id).join(Favourites)
-        if res:
+        query_res =Cars.query.join(Favourites).filter_by(user_id=user_id).all()
+        if query_res:
+            res = CarsSerializer(many=True).dump(query_res)
             return jsonify(res),200
         else:
             return jsonify({"message":"No favourites found"}),404
     else:
-        return jsonify({"message" : "users only have access to their own favourites"}),401
+        return jsonify({"message":"users only have access to their own favourites"}),401
 
 @app.after_request
 def add_header(response):
@@ -231,5 +254,8 @@ def gen_token():
     
     token = jwt.encode({
         'user_id': 1,
-        'exp': datetime.utcnow() + datetime.timedelta(hours=expiry_time),
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=expiry_time),
     }, app.config.get('SECRET_KEY'), algorithm="HS256")
+    
+    
+    return jsonify({"token":token}),200

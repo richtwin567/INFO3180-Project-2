@@ -10,6 +10,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_ACCESS_LIFESPAN = {'hours': 24}
     JWT_REFRESH_LIFESPAN = {'days': 30}
+    UPLOAD_FOLDER = "uploads"
     
 class DevelopmentConfig(Config):
     """Development Config that extends the Base Config Object"""
