@@ -8,6 +8,8 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DB_URL") or 'postgresql://yourusername:yourpassword@localhost/databasename'    
     DEBUG = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JWT_ACCESS_LIFESPAN = {'hours': 24}
+    JWT_REFRESH_LIFESPAN = {'days': 30}
     
 class DevelopmentConfig(Config):
     """Development Config that extends the Base Config Object"""

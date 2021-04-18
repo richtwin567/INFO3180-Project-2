@@ -8,8 +8,7 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 
-#print(dir(db))
-
+# not sure if we will be using Flask-Login at all
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'

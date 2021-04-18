@@ -128,6 +128,18 @@ class Cars(db.Model):
         cascade="all, delete",
         backref="cars"
     )
+    
+    def __init__(self,description,make,model,colour,year,transmission,car_type,price,photo,user_id):
+        self.description = description
+        self.make = make
+        self.model = model
+        self.colour = colour
+        self.year = year
+        self.transmission = transmission
+        self.car_type = car_type
+        self.price = price
+        self.photo = photo
+        self.user_id = user_id
 
 
 class Favourites(db.Model):
@@ -148,4 +160,8 @@ class Favourites(db.Model):
         db.Integer,
         db.ForeignKey("users.id")
     )
+
+    def __init__(self, car_id, user_id):
+        self.car_id = car_id
+        self.user_id = user_id
 
