@@ -130,5 +130,5 @@ dmypy.json
 
 # Because I'm tired of the python path configuration being deleted
 .vscode/
-
+node_modules
 update_req.js
