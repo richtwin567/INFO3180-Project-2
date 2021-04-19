@@ -80,11 +80,6 @@ def token_required(f):
     return decorated
 
 
-@app.route("/api/register", methods=["POST"])
-def register():
-    pass
-
-
 @app.route("/api/auth/logout", methods=["POST"])
 @token_required
 def logout():

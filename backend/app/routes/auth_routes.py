@@ -9,6 +9,7 @@ from flask import Blueprint, json, jsonify, request, make_response, abort
 # User defined modules
 from app import app, db
 from app.database.models import UserModel
+from app.helpers.auth_validation import validate_email
 
 # Create Blueprint to modularize routing
 auth_route = Blueprint('auth', __name__)
@@ -71,5 +72,38 @@ def login():
         )
 
 
-# Register the blueprints
+@auth_route.route('/register', methods=['POST'])
+def register():
+    """Route to retrieve details to signup a user up
+      Args:
+          None
+      Returns:
+          response_code: 201 if the registration is succesful
+                         401 if the user already exists
+      """
+    # Retrieve signup details from request
+    req = request.get_json(force=True)
+
+    # Retrieve username and email to check if they already exist
+    username = req.get('username')
+    email = req.get('email')
+
+    # Check if the user already exists
+    username_check = UserModel.query.filter_by(username=username).first()
+
+    # Validate the user's email address
+    email_check = validate_email(UserModel, email)
+
+    # If a user or email address is found, a 401 is sent to the client
+    if username_check is not None:
+        return make_response(
+            {'message': f'Username {username} already exists'}, 401)
+
+    elif email_check is not True:
+        return make_response(email_check, 401)
+
+    # Create user once validation checks are passed
+
+
+# Register the blueprint
 app.register_blueprint(auth_route, url_prefix='/api/auth')
