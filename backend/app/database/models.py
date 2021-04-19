@@ -1,10 +1,11 @@
-from app import  db
+from app import db
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
 """ The database models """
 
-class Users(db.Model):
+
+class UserModel(db.Model):
     __tablename__ = "users"
 
     # columns
@@ -46,17 +47,18 @@ class Users(db.Model):
     date_joined = db.Column(
         db.DateTime
     )
-    
+
     def __init__(self, username, biography, email, location, name, password, photo):
         self.username = username
-        self.biography= biography
+        self.biography = biography
         self.date_joined = datetime.now()
         self.email = email
         self.location = location
         self.name = name
-        self.password = generate_password_hash(password, method='pbkdf2:sha256')
+        self.password = generate_password_hash(
+            password, method='pbkdf2:sha256')
         self.photo = photo
-        
+
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
@@ -71,6 +73,7 @@ class Users(db.Model):
 
     def get_id(self):
         return str(self.id)  # python 3 support
+
 
 class Cars(db.Model):
     __tablename__ = "cars"
@@ -122,8 +125,8 @@ class Cars(db.Model):
         db.Integer,
         db.ForeignKey("users.id")
     )
-    
-    def __init__(self,description,make,model,colour,year,transmission,car_type,price,photo,user_id):
+
+    def __init__(self, description, make, model, colour, year, transmission, car_type, price, photo, user_id):
         self.description = description
         self.make = make
         self.model = model
