@@ -10,17 +10,17 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.utils import secure_filename
 import jwt
 from jwt.exceptions import (
-    ExpiredSignatureError, 
-    DecodeError, 
+    ExpiredSignatureError,
+    DecodeError,
     InvalidSignatureError
 )
 
-from app import app, db, login_manager
-from app.database.models import Users, Cars, Favourites
+from app import app, db
+from app.database.models import UserModel, Cars, Favourites
 from app.forms.forms import NewCarForm, LoginForm, RegisterForm
 from app.database.serializers import (
     UsersSerializer,
-    FavouritesSerializer, 
+    FavouritesSerializer,
     CarsSerializer
 )
 
@@ -31,14 +31,14 @@ from flask_wtf.csrf import generate_csrf
 def token_required(f):
     """
     Wraps a functions and makes it token required
-    
+
     Args:
         f (function):   The function to wrap
-        
+
     Returns:
         function -> The decorator function
     """
-    
+
     @wraps(f)
     def decorated(*args, **kwargs):
 
@@ -62,7 +62,7 @@ def token_required(f):
             data = jwt.decode(token, app.config.get(
                 'SECRET_KEY'), algorithms="HS256")
             # may be changed when auth is complete
-            current_user = Users.query.get(data.get('user_id'))
+            current_user = UserModel.query.get(data.get('user_id'))
 
             if not current_user:
                 abort(make_response({"message": "Token is invalid"}, 401))
@@ -85,11 +85,6 @@ def register():
     pass
 
 
-@app.route("/api/auth/login", methods=["POST"])
-def login():
-    pass
-
-
 @app.route("/api/auth/logout", methods=["POST"])
 @token_required
 def logout():
@@ -102,17 +97,17 @@ def handle_cars():
     """
     If the request is a GET request, returns all the cars in the database if there are cars. 
     If the request is a POST request, adds a new car to the database
-    
+
     Args:
         None
-        
+
     Returns:
         if GET:
             all cars or 404 if there are no cars
         if POST:
             succes or failure message
     """
-    
+
     if request.method == "GET":
         query_res = Cars.query.all()
         if query_res:
@@ -145,7 +140,7 @@ def handle_cars():
                 photofile.save(full_path)
                 # may be changed when auth is complete
                 user_id = g.current_user.id
-                
+
                 # add the car to the database
                 new_car = Cars(description, make, model, colour, year,
                                transmission, car_type, price, filename, user_id)
@@ -156,7 +151,7 @@ def handle_cars():
             except Exception as e:
                 return jsonify({"message": str(e)}), 500
         else:
-            
+
             # if validation fails send the errors
             errs = []
             for field, err in form.errors.items():
@@ -170,14 +165,14 @@ def handle_cars():
 def get_one_car(car_id):
     """
     Gets a single car 
-    
+
     Args:
         car_id(int):    the car's ID
-        
+
     Returns:
         The car or 404 if the car was not found
     """
-    
+
     query_res = Cars.query.get(car_id)
     if query_res:
         res = CarsSerializer().dump(query_res)
@@ -191,14 +186,14 @@ def get_one_car(car_id):
 def add_fav_car(car_id):
     """
     Adds a car to the current user's favourites
-    
+
     Args:
         car_id(int):    the car's ID
-        
+
     Returns:
         success or failure message
     """
-    
+
     car = Cars.query.get(car_id)
     if car:
         try:
@@ -219,15 +214,15 @@ def search():
     """
     Searches for cars by make and model if provided in the query string. 
     The search is case-insensitive.
-    
+
     Args:
         None
-        
+
     Returns:
         The search results or 404 if none of the cars meet the criteria  
-    
+
     """
-    
+
     make = request.args.get("make")
     model = request.args.get("model")
 
@@ -256,19 +251,19 @@ def search():
 def get_user_details(user_id):
     """
     Gets the details of a single user
-    
+
     Args:
         user_id(int):   The user's ID
-        
+
     Returns:
         The user if found or 404 if the user was not found. 
         If the current user does not match the requested user an unauthorized message is returned
     """
-    
+
     user = g.current_user
 
     if user.id == user_id:
-        query_res = Users.query.get(user_id)
+        query_res = UserModel.query.get(user_id)
         if query_res:
             res = UsersSerializer().dump(query_res)
             return jsonify(res), 200
@@ -283,15 +278,15 @@ def get_user_details(user_id):
 def get_favourite_cars(user_id):
     """
     Gets the favourites cars of the current user
-    
+
     Args:
         user_id(int):    The user's ID
-        
+
     Returns:
         The cars if the user has favourited cars or 404 if there are no favourite cars.
         If the current user does not match the requested user an unauthorized message is returned
     """
-    
+
     user = g.current_user
 
     if user.id == user_id:

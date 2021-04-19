@@ -1,3 +1,4 @@
+
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -11,10 +12,13 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 # not sure if we will be using Flask-Login at all
-login_manager = LoginManager()
-login_manager.init_app(app)
+# Since the frontend will be separate from the backend,
+# we wouldn't really be able to use Flask-Login
 
+# Authentication will really be the same as it was
+# for our prior projects
+
+# login_manager = LoginManager()
+# login_manager.init_app(app)
 from app.routes import routes
-
-
-
+from app.routes import auth_routes
