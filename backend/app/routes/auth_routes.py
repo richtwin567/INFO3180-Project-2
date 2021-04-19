@@ -74,19 +74,28 @@ def login():
 
 @auth_route.route('/register', methods=['POST'])
 def register():
-    """Route to retrieve details to signup a user up
-      Args:
-          None
-      Returns:
-          response_code: 201 if the registration is succesful
-                         401 if the user already exists
-      """
+    """Route to retrieve details to sign a user up.
+
+    Args:
+        None
+    Returns:
+        response_code: 201 if the registration is succesful
+                        401 if the user already exists
+
+    """
     # Retrieve signup details from request
     req = request.get_json(force=True)
 
     # Retrieve username and email to check if they already exist
     username = req.get('username')
     email = req.get('email')
+
+    # Retrieve other request fields for validation
+    password = req.get('password')
+    name = req.get('name')
+    location = req.get('location')
+    biography = req.get('biography')
+    photo_path = req.get('photo')
 
     # Check if the user already exists
     username_check = UserModel.query.filter_by(username=username).first()
@@ -103,6 +112,35 @@ def register():
         return make_response(email_check, 401)
 
     # Create user once validation checks are passed
+    else:
+        user = UserModel(
+            name=name,
+            username=username,
+            password=password,
+            email=email,
+            biography=biography,
+            photo=photo_path,
+            location=location,
+        )
+
+        # Add the user to the database
+        db.session.add(user)
+        db.session.commit()
+
+        # This probably doesn't work as yet
+        return make_response({
+            'message': "User Successfully registered",
+            'user': {
+                'id': user.id,
+                'username': username,
+                'name': name,
+                'photo': email,
+                'location': location,
+                'biography': biography,
+                'date_joined': user.date_joined
+            }
+
+        })
 
 
 # Register the blueprint
