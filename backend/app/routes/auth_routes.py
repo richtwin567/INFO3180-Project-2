@@ -10,6 +10,7 @@ from flask import Blueprint, json, jsonify, request, make_response, abort
 from app import app, db
 from app.database.models import UserModel
 from app.helpers.auth_validation import validate_email
+from app.routes.decorators import token_required
 
 # Create Blueprint to modularize routing
 auth_route = Blueprint('auth', __name__)
@@ -56,7 +57,6 @@ def login():
         token = jwt.encode({
             'public_id': user.public_id,
             'exp': datetime.utcnow() + timedelta(hours=expiry_time),
-            'admin': user.is_admin
         }, app.config.get('SECRET_KEY'), algorithm="HS256")
 
         return make_response(jsonify(
@@ -140,7 +140,25 @@ def register():
                 'date_joined': user.date_joined
             }
 
-        })
+        }, 201)
+
+
+@auth_route.route("/api/auth/logout", methods=["POST"])
+@token_required
+def logout():
+    """Log a user out.
+
+    Args:
+        None
+
+    Returns:
+        A 200 Response with a json object stating that the logout
+        was successful
+
+    """
+    return make_response({
+        "message": "Log out successful"
+    }, 200)
 
 
 # Register the blueprint

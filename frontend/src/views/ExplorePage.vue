@@ -1,12 +1,12 @@
 <template>
-  <div id="registration">
-    Registration
+  <div id="explore">
+    Explore
   </div>
 </template>
 
 <script>
 export default {
-  name: "RegistrationPage",
+  name: "ExplorePage",
 };
 </script>
 <style scoped></style>
