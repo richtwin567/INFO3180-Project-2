@@ -299,4 +299,5 @@ def index(path):
     "/<path:path".
     Also we will render the initial webpage and then let VueJS take control.
     """
+    print(app.static_folder)
     return app.send_static_file("index.html")
