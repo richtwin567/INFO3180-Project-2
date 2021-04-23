@@ -10,7 +10,7 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
-
+db.create_all()
 # not sure if we will be using Flask-Login at all
 # Since the frontend will be separate from the backend,
 # we wouldn't really be able to use Flask-Login
