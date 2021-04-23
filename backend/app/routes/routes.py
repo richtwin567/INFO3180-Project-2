@@ -4,7 +4,7 @@ import datetime
 from functools import wraps
 
 # Flask imports
-from flask import json, request, jsonify, g, make_response, abort
+from flask import json, request, jsonify, g, make_response, abort, render_template
 from operator import and_
 from sqlalchemy.orm import query
 from psycopg2 import DatabaseError
@@ -192,8 +192,7 @@ def search():
 @app.route("/api/users/<int:user_id>", methods=["GET"])
 @token_required
 def get_user_details(user_id):
-    """
-    Gets the details of a single user
+    """Gets the details of a single user.
 
     Args:
         user_id(int):   The user's ID
@@ -289,3 +288,15 @@ def gen_token():
     }, app.config.get('SECRET_KEY'), algorithm="HS256")
 
     return jsonify({"token": token}), 200
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
+    """
+    Because we use HTML5 history mode in vue-router we need to configure our
+    web server to redirect all routes to index.html. Hence the additional route
+    "/<path:path".
+    Also we will render the initial webpage and then let VueJS take control.
+    """
+    return app.send_static_file("index.html")
