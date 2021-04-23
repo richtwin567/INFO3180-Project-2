@@ -1,5 +1,7 @@
 <template>
-  <form></form>
+  <form>
+    <label for="username"> Username </label>
+  </form>
 </template>
 
 <script>
