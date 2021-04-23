@@ -163,4 +163,5 @@ class Favourites(db.Model):
         self.user_id = user_id
 
 
+# Added here to prevent circular dependency
 db.create_all()
