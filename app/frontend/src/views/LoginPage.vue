@@ -12,4 +12,11 @@ export default {
   name: "LoginPage",
 };
 </script>
-<style scoped></style>
+<style scoped>
+#login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+</style>

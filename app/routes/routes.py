@@ -301,3 +301,9 @@ def index(path):
     """
     print(app.static_folder)
     return app.send_static_file("index.html")
+
+
+@app.errorhandler(404)
+def not_found(e):
+    """Error handler to redirect 404s to Vue.js"""
+    return app.send_static_file("index.html")
