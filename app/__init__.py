@@ -1,6 +1,6 @@
 
 from flask import Flask
-from flask_login import LoginManager
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from app.config import Config
@@ -22,3 +22,4 @@ ma = Marshmallow(app)
 # login_manager.init_app(app)
 from app.routes import routes
 from app.routes import auth_routes
+
