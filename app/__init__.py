@@ -3,6 +3,9 @@ from flask import Flask
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+import wtforms_json
+from flask_wtf import CSRFProtect
+
 from app.config import Config
 
 app = Flask(__name__, static_folder='frontend/dist', static_url_path='/')
@@ -10,6 +13,9 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+csrf = CSRFProtect()
+wtforms_json.init()
+#csrf.init_app(app)
 db.create_all()
 # not sure if we will be using Flask-Login at all
 # Since the frontend will be separate from the backend,
@@ -22,4 +28,3 @@ db.create_all()
 # login_manager.init_app(app)
 from app.routes import routes
 from app.routes import auth_routes
-
