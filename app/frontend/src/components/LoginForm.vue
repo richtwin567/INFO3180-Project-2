@@ -71,4 +71,9 @@ button {
   padding: 8px 0px;
   color: #ffffff;
 }
+
+button:hover {
+  cursor: pointer;
+  background: #0a7753;
+}
 </style>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_ENDPOINT = "http://localhost:9090";
+const API_ENDPOINT = "http://localhost:9090/api";
 export async function login(userObj) {
   return axios
     .post(`${API_ENDPOINT}/auth/login`, {
