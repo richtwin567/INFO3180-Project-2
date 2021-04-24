@@ -2,17 +2,30 @@ import axios from "axios";
 
 const API_ENDPOINT = "http://localhost:9090/api";
 export async function login(userObj) {
-  return axios
-    .post(`${API_ENDPOINT}/auth/login`, {
+  let requestParams = {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       username: userObj.username,
       password: userObj.password,
-    })
+    }),
+  };
+
+  return fetch(`${API_ENDPOINT}/auth/login`, requestParams)
     .then((response) => {
-      // Store the JWT if its in the response
-      if (response.data.token) {
+      if (!response.ok) {
+        // Error handling for when the user isn't authenticated
+        if (response.status === 401) {
+          return response.json();
+        }
+      } else if (response.data.token) {
+        // Store the JWT if its in the response
         localStorage.setItem("jwt");
+        return response.data;
       }
-      return response.data;
     })
     .catch((err) => {
       console.log(err);
