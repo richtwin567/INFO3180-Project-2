@@ -24,12 +24,12 @@ export default {
     };
   },
   methods: {
-    handleSubmit(e) {
+    async handleSubmit(e) {
       e.preventDefault();
       let userObj = { username: this.username, password: this.password };
 
       // Log the user in
-      let data = authService.login(userObj);
+      let data = await authService.login(userObj);
       console.log(data);
     },
   },
