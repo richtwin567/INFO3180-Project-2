@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired, Email
 
 # forms for validating data sent to routes
 
+
 def create_uname_field():
     return StringField('Username', validators=[DataRequired()])
 
@@ -18,7 +19,7 @@ def create_password_field():
     return PasswordField("Password", validators=[DataRequired()])
 
 
-class RegisterForm(FlaskForm):
+class RegistrationForm(FlaskForm):
 
     username = create_uname_field()
     password = create_password_field()
@@ -28,25 +29,25 @@ class RegisterForm(FlaskForm):
     biography = TextAreaField(label="Biography", validators=[DataRequired()])
     photo = create_photo_field()
 
+
 class LoginForm(FlaskForm):
-    
+
     username = create_uname_field()
     password = create_password_field()
-    
+
 
 class NewCarForm(FlaskForm):
-    
+
     make = StringField(validators=[DataRequired()])
     model = StringField(validators=[DataRequired()])
     colour = StringField(validators=[DataRequired()])
     year = StringField(validators=[DataRequired()])
     price = DecimalField(validators=[DataRequired()])
-    
+
     # need to query if these should be enums in the db or frontend decides the options
-    
+
     car_type = StringField(validators=[DataRequired()])
-    transmission =StringField(validators=[DataRequired()])    
-    
+    transmission = StringField(validators=[DataRequired()])
+
     description = TextAreaField(validators=[DataRequired()])
     photo = create_photo_field()
-    

@@ -1,16 +1,19 @@
 """The routes required for authentication."""
 # Builtin modules
+import os
 from datetime import datetime, timedelta
 
 # Flask Imports
 import jwt
 from flask import Blueprint, json, jsonify, request, make_response, abort
+from werkzeug.utils import secure_filename
 
 # User defined modules
 from app import app, db
 from app.database.models import UserModel
 from app.helpers.auth_validation import validate_email
 from app.routes.decorators import token_required
+from app.forms.forms import RegistrationForm, LoginForm
 
 # Create Blueprint to modularize routing
 auth_route = Blueprint('auth', __name__)
@@ -28,26 +31,30 @@ def login():
         If the user data is invalid or not found, a 401 response is
         returned
     """
-    # Retrieve login details from request
-    req = request.get_json(force=True)
-    username = req.get('username')
-    password = req.get('password')
+    # Initialize form form object and temporarily disable csrf
+    form = LoginForm(meta={'csrf': False})
+
+    # Initialize username and password to none, to prevent undefined error
+    username = None
+    password = None
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
 
     # Check if the fields were successfully recieved, if not return a 401
     if username is None or password is None:
         return make_response(
-            'Could not verify user',
-            401,
-            {'WWW-Authenticate': 'Basic realm ="Login details required"'})
+            {'error':
+             'Username or password fields are empty'},
+            401)
 
     user = UserModel.query.filter_by(username=username).first()
 
     # Return a 401 if no user is found
     if user is None:
         return abort(make_response(
-            {"message": 'Could not verify user'},
-            401,
-            {'WWW-Authenticate': 'Basic realm ="User does not exist"'}))
+            {"error": 'Could not verify user, the user does not exist'},
+            401))
 
     # Verify user password
     if user.check_password(password) is True:
@@ -67,8 +74,7 @@ def login():
     else:
         return make_response(
             {'message': 'Incorrect password'},
-            401,
-            {'WWW-Authenticate': 'Basic realm="Wrong password"'}
+            401
         )
 
 
@@ -83,64 +89,69 @@ def register():
                         401 if the user already exists
 
     """
-    # Retrieve signup details from request
-    req = request.get_json(force=True)
+    # Initialize the form
+    form = RegistrationForm(meta={'csrf': False})
 
-    # Retrieve username and email to check if they already exist
-    username = req.get('username')
-    email = req.get('email')
+    if form.validate_on_submit():
+        # Extract form fields
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+        name = form.fullname.data
+        location = form.location.data
+        biography = form.biography.data
+        photo = form.photo.data
 
-    # Retrieve other request fields for validation
-    password = req.get('password')
-    name = req.get('name')
-    location = req.get('location')
-    biography = req.get('biography')
-    photo_path = req.get('photo')
+        # Save the photo
+        photo_path = secure_filename(photo.filename)
+        path_joined = os.path.join(app.config['UPLOAD_FOLDER'], photo_path)
+        photo.save(path_joined)
 
-    # Check if the user already exists
-    username_check = UserModel.query.filter_by(username=username).first()
+        # Check if the user already exists
+        username_check = UserModel.query.filter_by(username=username).first()
 
-    # Validate the user's email address
-    email_check = validate_email(UserModel, email)
+        # Validate the user's email address
+        email_check = validate_email(UserModel, email)
 
-    # If a user or email address is found, a 401 is sent to the client
-    if username_check is not None:
-        return make_response(
-            {'message': f'Username {username} already exists'}, 401)
+        # If a user or email address is found, a 401 is sent to the client
+        if username_check is not None:
+            return make_response(
+                {'message': f'Username {username} already exists'}, 401)
 
-    elif email_check is not True:
-        return make_response(email_check, 401)
+        elif email_check is not True:
+            return make_response(email_check, 401)
 
-    # Create user once validation checks are passed
-    else:
-        user = UserModel(
-            name=name,
-            username=username,
-            password=password,
-            email=email,
-            biography=biography,
-            photo=photo_path,
-            location=location,
-        )
+        # Create user once validation checks are passed
+        else:
+            user = UserModel(
+                name=name,
+                username=username,
+                password=password,
+                email=email,
+                biography=biography,
+                photo=photo_path,
+                location=location,
+            )
 
-        # Add the user to the database
-        db.session.add(user)
-        db.session.commit()
+            # Add the user to the database
+            db.session.add(user)
+            db.session.commit()
 
-        # This probably doesn't work as yet
-        return make_response({
-            'message': "User Successfully registered",
-            'user': {
-                'id': user.id,
-                'username': username,
-                'name': name,
-                'photo': email,
-                'location': location,
-                'biography': biography,
-                'date_joined': user.date_joined
-            }
+            # This probably doesn't work as yet
+            return make_response({
+                'message': "User Successfully registered",
+                'user': {
+                    'id': user.id,
+                    'username': username,
+                    'name': name,
+                    'photo': photo_path,
+                    'email': email,
+                    'location': location,
+                    'biography': biography,
+                    'date_joined': user.date_joined
+                }
 
-        }, 201)
+            }, 201)
 
 
 @auth_route.route("/api/auth/logout", methods=["POST"])

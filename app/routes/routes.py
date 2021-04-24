@@ -22,7 +22,7 @@ from jwt.exceptions import (
 # User module imports
 from app import app, db
 from app.database.models import UserModel, Cars, Favourites
-from app.forms.forms import NewCarForm, LoginForm, RegisterForm
+from app.forms.forms import NewCarForm
 from app.database.serializers import (
     UsersSerializer,
     FavouritesSerializer,
