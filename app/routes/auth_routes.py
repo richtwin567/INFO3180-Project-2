@@ -38,8 +38,7 @@ def login():
         return make_response(
             {'error':
              'Username or password fields are empty'},
-            401,
-            {'WWW-Authenticate': 'Basic realm ="Login details required"'})
+            401)
 
     user = UserModel.query.filter_by(username=username).first()
 
@@ -47,8 +46,7 @@ def login():
     if user is None:
         return abort(make_response(
             {"error": 'Could not verify user, the user does not exist'},
-            401,
-            {'WWW-Authenticate': 'Basic realm ="User does not exist"'}))
+            401))
 
     # Verify user password
     if user.check_password(password) is True:
@@ -68,8 +66,7 @@ def login():
     else:
         return make_response(
             {'message': 'Incorrect password'},
-            401,
-            {'WWW-Authenticate': 'Basic realm="Wrong password"'}
+            401
         )
 
 
