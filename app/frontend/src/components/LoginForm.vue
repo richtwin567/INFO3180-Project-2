@@ -1,11 +1,11 @@
 <template>
   <section id="login-form-container">
-    <form>
+    <form @submit.prevent="handleSubmit" method="POST">
       <label for="username"> Username </label>
       <input id="username" type="text" v-model="username" required />
       <label for="password"> Password </label>
       <input id="password" type="password" v-model="password" required />
-      <button class="auth-form-btn" type="submit" @click="handleSubmit">
+      <button class="auth-form-btn" type="submit">
         Login
       </button>
       <div v-if="error" class="error">
