@@ -13,8 +13,26 @@
 </template>
 
 <script>
+import * as authService from "@/services/auth.service.js";
+
 export default {
   name: "LoginForm",
+  data() {
+    return {
+      username: "",
+      password: "",
+    };
+  },
+  methods: {
+    handleSubmit(e) {
+      e.preventDefault();
+      let userObj = { username: this.username, password: this.password };
+
+      // Log the user in
+      let data = authService.login(userObj);
+      console.log(data);
+    },
+  },
 };
 </script>
 <style scoped>
@@ -52,5 +70,10 @@ button {
   border-radius: 5px;
   padding: 8px 0px;
   color: #ffffff;
+}
+
+button:hover {
+  cursor: pointer;
+  background: #0a7753;
 }
 </style>

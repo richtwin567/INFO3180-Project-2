@@ -1,8 +1,9 @@
 import axios from "axios";
 
+const API_ENDPOINT = "http://localhost:9090/api";
 export async function login(userObj) {
   return axios
-    .post("/auth/login", {
+    .post(`${API_ENDPOINT}/auth/login`, {
       username: userObj.username,
       password: userObj.password,
     })
@@ -18,14 +19,14 @@ export async function login(userObj) {
     });
 }
 
-async function register(userObj) {}
+// export async function register(userObj) {}
 
 export async function logout() {
   // Remove the JWT
   localStorage.removeItem("jwt");
 
   // Retrieve response from server
-  return axios.post("/logout", {}).then((response) => {
+  return axios.post(`${API_ENDPOINT}/logout`, {}).then((response) => {
     return response.data;
   });
 }

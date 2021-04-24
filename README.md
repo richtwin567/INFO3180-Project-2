@@ -36,9 +36,11 @@ Navigate to localhost:8080 to view the application
 The bulk of the source code can be found in the `app` directory and is split into multiple modules:
 
 `database` - Houses the SQLAlchemy Database models
+
 `frontend` - Houses the Vue.js frontend, and replaces the `static` directory conventionally used in flask
 
 `routes` - Houses the routes for the application and is split up into `routes` and `auth_routes`
+
 `helpers` - Houses functions that do not directly fall into any of the above categories, but are still necessary for the application
 
 `config` - Houses the key configuration values for the application
@@ -47,7 +49,7 @@ The bulk of the source code can be found in the `app` directory and is split int
 
 The frontend of the application can be accessed in `app/frontend`, and uses Yarn as the package manager.
 
-This approach was done to allow for the project to be easily deployed on heroku with Flask.
+This approach was done to allow for the project to be easily developed with SFCS, since mos t of the group is familiar with SFCS from react, and to allow for it to be easily deployed on heroku with Flask.
 
 When making changes to the frontend run `yarn build` to ensure that your changes will be updated when deployed, as the frontend is served by Flask instead of vue on heroku
 
