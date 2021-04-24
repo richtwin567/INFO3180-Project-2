@@ -31,12 +31,8 @@ def login():
         If the user data is invalid or not found, a 401 response is
         returned
     """
-    # Retrieve json request
-    req = request.get_json()
-
-    # Initialize form form object
+    # Initialize form form object and temporarily disable csrf
     form = LoginForm(meta={'csrf': False})
-    print(form.data)
 
     # Initialize username and password to none, to prevent undefined error
     username = None
@@ -94,7 +90,7 @@ def register():
 
     """
     # Initialize the form
-    form = RegistrationForm()
+    form = RegistrationForm(meta={'csrf': False})
 
     if form.validate_on_submit():
         # Extract form fields
