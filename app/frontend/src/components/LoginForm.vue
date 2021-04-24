@@ -8,6 +8,9 @@
       <button class="auth-form-btn" type="submit" @click="handleSubmit">
         Login
       </button>
+      <div v-if="error" class="error">
+        {{ error }}
+      </div>
     </form>
   </section>
 </template>
@@ -21,6 +24,7 @@ export default {
     return {
       username: "",
       password: "",
+      error: "",
     };
   },
   methods: {
@@ -30,6 +34,10 @@ export default {
 
       // Log the user in
       let data = await authService.login(userObj);
+      if (data.error) {
+        console.log(data.error);
+        this.error = data.error;
+      }
       console.log(data);
     },
   },
@@ -42,6 +50,20 @@ form {
   flex-direction: column;
 
   justify-content: center;
+}
+
+.error {
+  color: #ca4148;
+  background-color: #ffbaba;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 95%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ca4148;
+  text-align: center;
+  margin-top: 10px;
 }
 
 #login-form-container {

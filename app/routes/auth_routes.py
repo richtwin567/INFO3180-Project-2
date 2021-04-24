@@ -36,7 +36,8 @@ def login():
     # Check if the fields were successfully recieved, if not return a 401
     if username is None or password is None:
         return make_response(
-            'Could not verify user',
+            {'error':
+             'Username or password fields are empty'},
             401,
             {'WWW-Authenticate': 'Basic realm ="Login details required"'})
 
@@ -45,7 +46,7 @@ def login():
     # Return a 401 if no user is found
     if user is None:
         return abort(make_response(
-            {"message": 'Could not verify user'},
+            {"error": 'Could not verify user, the user does not exist'},
             401,
             {'WWW-Authenticate': 'Basic realm ="User does not exist"'}))
 
