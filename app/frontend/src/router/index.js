@@ -3,6 +3,7 @@ import Home from "@/views/Home.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import RegistrationPage from "@/views/RegistrationPage.vue";
 import ExplorePage from "@/views/ExplorePage.vue";
+import AddNewCarPage from "@/views/AddNewCarPage.vue";
 
 const routes = [
   {
@@ -39,6 +40,14 @@ const routes = [
     path: "/explore",
     name: "ExplorePage",
     component: ExplorePage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/cars/new",
+    name: "AddNewCarPage",
+    component: AddNewCarPage,
     meta: {
       requiresAuth: true,
     },
