@@ -4,34 +4,50 @@
       @submit.prevent="handleSubmit"
       method="POST"
       enctype="multipart/form-data"
+      id="registration-form"
     >
       <article class="form-fields">
         <div class="form-field">
           <label for="username"> Username </label>
-          <input id="username" type="text" required />
+          <input id="username" type="text" required v-model="username" />
         </div>
         <div class="form-field">
           <label for="password"> Password </label>
-          <input id="password" type="password" required />
+          <input id="password" type="password" required v-model="password" />
         </div>
       </article>
       <article class="form-fields">
         <div class="form-field">
           <label for="fullname"> Fullname </label>
-          <input id="fullname" type="text" required />
+          <input id="fullname" type="text" required v-model="fullname" />
         </div>
         <div class="form-field">
           <label for="email"> Email </label>
-          <input id="email" type="email" required />
+          <input id="email" type="email" required v-model="email" />
         </div>
       </article>
       <div class="form-field">
         <label for="location">Location</label>
-        <input id="location" type="text" required />
+        <input id="location" type="text" required v-model="location" />
       </div>
       <div class="form-field">
         <label for="biography">Biography</label>
-        <textarea id="biography" rows="8" cols="50" required></textarea>
+        <textarea
+          id="biography"
+          rows="8"
+          cols="50"
+          required
+          v-model="biography"
+        ></textarea>
+      </div>
+      <div class="form-field">
+        <input
+          type="file"
+          name="photo"
+          ref="photo"
+          accept="image/*"
+          v-on:change="handleFileUpload()"
+        />
       </div>
       <div class="form-field">
         <button type="submit" id="register-btn">Register</button>
@@ -41,7 +57,7 @@
 </template>
 
 <script>
-// import * as authService from "@/services/auth.service.js";
+import * as authService from "@/services/auth.service.js";
 
 export default {
   name: "RegistrationForm",
@@ -54,12 +70,47 @@ export default {
       email: "",
       location: "",
       biography: "",
-      photo_path: "",
+      photo: "",
     };
   },
   methods: {
+    handleFileUpload() {
+      this.photo = this.$refs.photo.files[0];
+    },
     async handleSubmit(e) {
       e.preventDefault();
+
+      // Destructure form fields from state
+      const formObj = {
+        username: this.username,
+        password: this.password,
+        fullname: this.fullname,
+        email: this.email,
+        location: this.location,
+        biography: this.biography,
+        photo: this.photo,
+      };
+
+      // Create the form data object
+      const formData = new FormData();
+
+      for (let field in formObj) {
+        formData.append(field, formObj[field]);
+      }
+
+      for (var value of formData.values()) {
+        console.log(value);
+      }
+      // Register the user
+      let data = await authService.register(formData);
+
+      // Display errors if found, otherwise log user in and then redirect
+      if (data.error) {
+        console.log(data.error);
+        this.error = data.error;
+      } else {
+        authService.login(data);
+      }
     },
   },
 };
@@ -91,6 +142,10 @@ export default {
   width: 95%;
 }
 
+.form-field input[type="file"] {
+  border: none;
+  padding: 10px 0px;
+}
 .form-field label {
   font-weight: bold;
 }
