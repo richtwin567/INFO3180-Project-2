@@ -13,9 +13,7 @@ app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
-csrf = CSRFProtect()
 wtforms_json.init()
-#csrf.init_app(app)
 db.create_all()
 # not sure if we will be using Flask-Login at all
 # Since the frontend will be separate from the backend,

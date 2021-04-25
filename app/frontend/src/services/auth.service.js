@@ -1,16 +1,19 @@
 import axios from "axios";
+// import { CSRFHeader } from "@/services/headers.service.js";
 
 const API_ENDPOINT = "http://localhost:9090/api";
-export async function login(userObj) {
+export async function login(formData) {
+  // const token = await CSRFHeader(`${API_ENDPOINT}/auth/login`);
   let requestParams = {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      //  "X-CSRFToken": token.csrf_token,
     },
     body: JSON.stringify({
-      username: userObj.username,
-      password: userObj.password,
+      username: formData.username,
+      password: formData.password,
     }),
   };
 
@@ -32,7 +35,31 @@ export async function login(userObj) {
     });
 }
 
-// export async function register(userObj) {}
+export async function register(formData) {
+  let requestParams = {
+    method: "POST",
+    body: formData,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    },
+  };
+
+  return fetch(`${API_ENDPOINT}/auth/register`, requestParams)
+    .then((response) => {
+      if (!response.ok) {
+        // Error handling for when the user isn't authenticated
+        if (response.status === 401) {
+          return response.json();
+        }
+      } else {
+        return response.json();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
 export async function logout() {
   // Remove the JWT
