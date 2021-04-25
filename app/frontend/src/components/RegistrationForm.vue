@@ -1,11 +1,6 @@
 <template>
   <section id="registration-form-container">
-    <form
-      @submit.prevent="handleSubmit"
-      method="POST"
-      enctype="multipart/form-data"
-      id="registration-form"
-    >
+    <form @submit.prevent="handleSubmit" method="POST" id="registration-form">
       <article class="form-fields">
         <div class="form-field">
           <label for="username"> Username </label>
