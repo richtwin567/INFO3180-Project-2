@@ -24,10 +24,8 @@ export async function login(formData) {
         if (response.status === 401) {
           return response.json();
         }
-      } else if (response.data.token) {
-        // Store the JWT if its in the response
-        localStorage.setItem("jwt");
-        return response.data;
+      } else {
+        return response.json();
       }
     })
     .catch((err) => {
@@ -35,14 +33,19 @@ export async function login(formData) {
     });
 }
 
+export function handleLogin(loginResponse) {
+  // Store the JWT
+  localStorage.setItem("jwt", loginResponse.token);
+
+  // Redirect
+
+  // Return the success message
+  return { success: loginResponse.message };
+}
 export async function register(formData) {
   let requestParams = {
     method: "POST",
     body: formData,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "multipart/form-data",
-    },
   };
 
   return fetch(`${API_ENDPOINT}/auth/register`, requestParams)
