@@ -2,6 +2,11 @@ import axios from "axios";
 // import { CSRFHeader } from "@/services/headers.service.js";
 
 const API_ENDPOINT = "http://localhost:9090/api";
+
+/**
+ * Sends user data to the server to log them in
+ * @param {object} formData  The user data from the login form
+ */
 export async function login(formData) {
   // const token = await CSRFHeader(`${API_ENDPOINT}/auth/login`);
   let requestParams = {
@@ -33,15 +38,23 @@ export async function login(formData) {
     });
 }
 
+/**
+ * Stores the JWT in local storage
+ * @param {object} loginResponse A JSON object containing the JWT
+ * and success message
+ */
 export function handleLogin(loginResponse) {
   // Store the JWT
   localStorage.setItem("jwt", loginResponse.token);
 
-  // Redirect
-
   // Return the success message
   return { success: loginResponse.message };
 }
+
+/**
+ * Creates a new user in the database
+ * @param {FormData} formData The form data object containing user data
+ */
 export async function register(formData) {
   let requestParams = {
     method: "POST",

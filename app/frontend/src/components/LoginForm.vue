@@ -38,7 +38,11 @@ export default {
         console.log(data.error);
         this.error = data.error;
       } else {
+        // Store the JWT
         authService.handleLogin(data);
+
+        // Redirect to home
+        this.$router.push("/");
       }
       console.log(data);
     },
