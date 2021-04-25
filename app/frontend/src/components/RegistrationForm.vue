@@ -1,11 +1,6 @@
 <template>
   <section id="registration-form-container">
-    <form
-      @submit.prevent="handleSubmit"
-      method="POST"
-      enctype="multipart/form-data"
-      id="registration-form"
-    >
+    <form @submit.prevent="handleSubmit" method="POST" id="registration-form">
       <article class="form-fields">
         <div class="form-field">
           <label for="username"> Username </label>
@@ -71,6 +66,7 @@ export default {
       location: "",
       biography: "",
       photo: "",
+      error: "",
     };
   },
   methods: {
@@ -98,9 +94,6 @@ export default {
         formData.append(field, formObj[field]);
       }
 
-      for (var value of formData.values()) {
-        console.log(value);
-      }
       // Register the user
       let data = await authService.register(formData);
 
@@ -109,8 +102,20 @@ export default {
         console.log(data.error);
         this.error = data.error;
       } else {
-        authService.login(data);
+        // Auto Login on Success
+        let loginResponse = authService.login({
+          username: this.username,
+          password: this.password,
+        });
+
+        // Set the JWT from login
+        authService.handleLogin(loginResponse);
+
+        // Redirect to home
+        this.$router.push("/");
       }
+
+      console.log(data);
     },
   },
 };
