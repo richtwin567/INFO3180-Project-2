@@ -66,6 +66,7 @@ export default {
       location: "",
       biography: "",
       photo: "",
+      error: "",
     };
   },
   methods: {
@@ -93,9 +94,6 @@ export default {
         formData.append(field, formObj[field]);
       }
 
-      for (var value of formData.values()) {
-        console.log(value);
-      }
       // Register the user
       let data = await authService.register(formData);
 
@@ -104,8 +102,20 @@ export default {
         console.log(data.error);
         this.error = data.error;
       } else {
-        authService.login(data);
+        // Auto Login on Success
+        let loginResponse = authService.login({
+          username: this.username,
+          password: this.password,
+        });
+
+        // Set the JWT from login
+        authService.handleLogin(loginResponse);
+
+        // Redirect to home
+        this.$router.push("/");
       }
+
+      console.log(data);
     },
   },
 };
