@@ -18,6 +18,6 @@ export default {
 
 <style scoped>
 .home {
-  height: 100%;
+  height: calc(93vh - 20px);
 }
 </style>

@@ -6,6 +6,7 @@ from functools import wraps
 # Flask imports
 from flask import json, request, jsonify, g, make_response, abort, render_template
 from operator import and_
+from flask.helpers import send_from_directory
 from sqlalchemy.orm import query
 from psycopg2 import DatabaseError
 from werkzeug.exceptions import HTTPException
@@ -35,7 +36,6 @@ from flask_wtf.csrf import generate_csrf
 
 
 @app.route("/api/cars", methods=["GET", "POST"])
-@token_required
 def handle_cars():
     """
     If the request is a GET request, returns all the cars in the database if there are cars. 
@@ -104,7 +104,7 @@ def handle_cars():
 
 
 @app.route("/api/cars/<int:car_id>", methods=["GET"])
-@token_required
+# @token_required
 def get_one_car(car_id):
     """
     Gets a single car 
@@ -216,7 +216,7 @@ def get_user_details(user_id):
 
 
 @app.route("/api/users/<int:user_id>/favourites", methods=["GET"])
-@token_required
+# @token_required
 def get_favourite_cars(user_id):
     """
     Gets the favourites cars of the current user
@@ -229,7 +229,8 @@ def get_favourite_cars(user_id):
         If the current user does not match the requested user an unauthorized message is returned
     """
 
-    user = g.current_user
+    #user = g.current_user
+    user = UserModel.query.get(user_id)
 
     if user.id == user_id:
         query_res = Cars.query.join(
@@ -241,6 +242,12 @@ def get_favourite_cars(user_id):
             return jsonify({"message": "No favourites found"}), 404
     else:
         return jsonify({"message": "users only have access to their own favourites"}), 401
+
+@app.route("/uploads/<filename>")
+def get_image(filename):
+    root_dir = os.getcwd()
+    print(send_from_directory(os.path.join(root_dir,app.config['UPLOAD_FOLDER']),filename))
+    return send_from_directory(os.path.join(root_dir,app.config['UPLOAD_FOLDER']),filename)
 
 
 @app.after_request
