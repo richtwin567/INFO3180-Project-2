@@ -34,6 +34,7 @@ export default {
 
       // Log the user in
       let data = await authService.login(userObj);
+      console.log(document.cookies);
       if (data.error) {
         console.log(data.error);
         this.error = data.error;

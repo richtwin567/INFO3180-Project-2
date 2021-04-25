@@ -34,6 +34,10 @@ def login():
     # Initialize form form object and temporarily disable csrf
     form = LoginForm(meta={'csrf': False})
 
+    # Send CSRF token on get requests
+    # if request.method == 'GET':
+    #   return make_response({'csrf_token': generate_csrf()}, 200)
+
     # Initialize username and password to none, to prevent undefined error
     username = None
     password = None
@@ -93,6 +97,7 @@ def register():
     form = RegistrationForm(meta={'csrf': False})
 
     if form.validate_on_submit():
+
         # Extract form fields
         username = form.username.data
         password = form.password.data
@@ -152,6 +157,8 @@ def register():
                 }
 
             }, 201)
+    else:
+        return jsonify({"message": form.errors}), 500
 
 
 @auth_route.route("/api/auth/logout", methods=["POST"])
