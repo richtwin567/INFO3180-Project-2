@@ -29,12 +29,6 @@ python3 server.py
 Step 4:
 Navigate to localhost:8080 to view the application
 
-# Deployment
-
-## Important
-
-When making changes to the vue frontend in `frontend/`, ensure that `yarn build` is run before pushing to the repository, otherwise the frontend will not be updated on heroku, as flask serves the vue.js frontend from the `dist/` directory in `frontend/`
-
 # Development
 
 ## Project Structure
@@ -57,6 +51,6 @@ The frontend of the application can be accessed in `app/frontend`, and uses Yarn
 
 This approach was done to allow for the project to be easily developed with SFCS, since mos t of the group is familiar with SFCS from react, and to allow for it to be easily deployed on heroku with Flask.
 
-When making changes to the frontend run `yarn build` to ensure that your changes will be updated when deployed, as the frontend is served by Flask instead of vue on heroku
+When making changes to the vue frontend in `frontend/`, ensure that `yarn build` is run before pushing to the repository, otherwise the frontend will not be updated on heroku, as flask serves the vue.js frontend from the `dist/` directory in `frontend/`
 
 However for development, the frontend can be run with `yarn serve`
