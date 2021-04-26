@@ -25,8 +25,17 @@
       </div>
       <div class="car-btns">
         <a href="/login" class="login-btn">Email Owner</a>
-        <button class="fave">
-          <img src="../assets/heart.svg" alt="fave" />
+        <button @click="setFave" class="fave">
+          <img
+            :class="isFavourite ? 'hidden' : ''"
+            src="../assets/heart.svg"
+            alt="fave"
+          />
+          <img
+            :class="isFavourite ? '' : 'hidden'"
+            src="../assets/heart-filled.svg"
+            alt="fave"
+          />
         </button>
       </div>
     </div>
@@ -34,33 +43,88 @@
 </template>
 
 <script>
+import { authHeader } from "../services/headers.service.js";
+
 export default {
   name: "ExploreComponent",
   created() {
     let self = this;
     let id = window.location.pathname.replace("/cars/", "");
 
-    fetch(`http://localhost:9090/api/cars/${id}`)
+    let token = authHeader().Authorization;
+
+    function parseJWT(t) {
+      var base64Url = t.split(".")[1];
+      var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      var jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function(c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+
+      return JSON.parse(jsonPayload);
+    }
+    self.uid = parseJWT(token).id;
+
+    fetch(`http://localhost:9090/api/cars/${id}`, {
+      headers: authHeader(),
+    })
       .then(function(response) {
         return response.json();
       })
       .then(function(data) {
-        console.log(data);
         if (!data.message) {
           self.car = data;
           self.pic_src = "../../../../uploads/" + data.photo;
         }
+      });
+    fetch(`http://localhost:9090/api/users/${self.uid}/favourites`, {
+      headers: authHeader(),
+    })
+      .then(function(response) {
+        return response.json();
       })
-      .then(function() {});
+      .then(function(data) {
+        if (!data.message) {
+          self.favourites = data;
+        }
+      })
+      .then(function() {
+        if (self.favourites.map((fave) => fave.id).includes(self.car.id)) {
+          self.isFavourite = true;
+        }
+      });
   },
   data() {
     return {
       car: {},
+      favourites: [],
+      isFavourite: false,
       pic_src: String,
+      uid: String,
     };
   },
   methods: {
-    favourite() {},
+    setFave() {
+      let self = this;
+
+      if (!self.isFavourite) {
+        fetch(`http://localhost:9090/api/cars/${self.car.id}/favourite`, {
+          headers: authHeader(),
+          method: "POST",
+        })
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
+            console.log(data);
+            self.isFavourite = true;
+          });
+      }
+    },
   },
 };
 </script>
@@ -167,5 +231,9 @@ p {
   border-radius: 5px;
   color: #ffffff;
   padding: 12px 25px;
+}
+
+.hidden {
+  display: none;
 }
 </style>

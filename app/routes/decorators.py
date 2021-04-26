@@ -60,10 +60,10 @@ def token_required(f):
                 'SECRET_KEY'), algorithms="HS256")
 
             # may be changed when auth is complete
-            current_user = UserModel.query.get(data.get('user_id'))
+            current_user = UserModel.query.get(data.get('id'))
 
             if not current_user:
-                abort(make_response({"message": "Token is invalid"}, 401))
+                abort(make_response({"message": "Token is invalid, no user matched to token"}, 401))
 
         except InvalidSignatureError:
             abort(make_response({"message": 'Token is invalid'}, 401))

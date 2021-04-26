@@ -42,7 +42,7 @@ const routes = [
     name: "ExplorePage",
     component: ExplorePage,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
     },
   },
   {
@@ -50,7 +50,7 @@ const routes = [
     name: "CarPage",
     component: CarPage,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
     },
   },
   {
@@ -58,7 +58,7 @@ const routes = [
     name: "UserPage",
     component: UserPage,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
     },
   },
 ];

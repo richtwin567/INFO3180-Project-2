@@ -36,6 +36,7 @@ from flask_wtf.csrf import generate_csrf
 
 
 @app.route("/api/cars", methods=["GET", "POST"])
+@token_required
 def handle_cars():
     """
     If the request is a GET request, returns all the cars in the database if there are cars. 
@@ -104,7 +105,7 @@ def handle_cars():
 
 
 @app.route("/api/cars/<int:car_id>", methods=["GET"])
-# @token_required
+@token_required
 def get_one_car(car_id):
     """
     Gets a single car 
@@ -216,7 +217,7 @@ def get_user_details(user_id):
 
 
 @app.route("/api/users/<int:user_id>/favourites", methods=["GET"])
-# @token_required
+@token_required
 def get_favourite_cars(user_id):
     """
     Gets the favourites cars of the current user
@@ -229,8 +230,7 @@ def get_favourite_cars(user_id):
         If the current user does not match the requested user an unauthorized message is returned
     """
 
-    #user = g.current_user
-    user = UserModel.query.get(user_id)
+    user = g.current_user
 
     if user.id == user_id:
         query_res = Cars.query.join(

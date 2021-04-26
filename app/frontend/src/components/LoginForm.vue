@@ -42,7 +42,7 @@ export default {
         authService.handleLogin(data);
 
         // Redirect to home
-        this.$router.push("/");
+        window.location.href = "/explore";
       }
       console.log(data);
     },

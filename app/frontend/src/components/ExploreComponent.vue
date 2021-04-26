@@ -62,12 +62,14 @@
 </template>
 
 <script>
+import { authHeader } from "../services/headers.service";
 export default {
   name: "ExploreComponent",
   created() {
     let self = this;
-
-    fetch("http://localhost:9090/api/cars")
+    fetch("http://localhost:9090/api/cars", {
+      headers: authHeader(),
+    })
       .then(function(response) {
         return response.json();
       })

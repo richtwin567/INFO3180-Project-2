@@ -1,92 +1,123 @@
 <template>
-  <section id="user-page">
-    <div class="user-card">
-      <div class="profile-img">
-        <img
-          src="https://goop-img.com/wp-content/uploads/2015/08/9-Best-Clean-Face-Oils-TLP-MANI-0100_Magdalena-Niziol-The-Licensing-Project.jpg"
-          alt=""
-        />
-      </div>
-      <div>
-        <h1>FirstName LastName</h1>
-        <h3>tester</h3>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-        <br />
-        <p class="black">
-          <span class="user-detail-label">Email </span> test@test.com
-        </p>
-        <p class="black">
-          <span class="user-detail-label">Location </span> Mandeville
-        </p>
-        <p class="black">
-          <span class="user-detail-label">Joined </span> April 7, 2021
-        </p>
-      </div>
+  <section>
+    <div :class="param == uid ? 'hidden' : ''">
+      <h1 id="no-access">You cannot access this page</h1>
     </div>
+    <div :class="param == uid ? '' : 'hidden'" id="user-page">
+      <div class="user-card">
+        <div class="profile-img">
+          <img :src="'http://localhost:9090/uploads/' + user.photo" alt="" />
+        </div>
+        <div>
+          <h1>{{ user.name }}</h1>
+          <h3>{{ user.username }}</h3>
+          <p>{{ user.biography }}</p>
+          <br />
+          <p class="black">
+            <span class="user-detail-label">Email </span> {{ user.email }}
+          </p>
+          <p class="black">
+            <span class="user-detail-label">Location </span> {{ user.location }}
+          </p>
+          <p class="black">
+            <span class="user-detail-label">Joined </span>
+            {{ user.date_joined }}
+          </p>
+        </div>
+      </div>
 
-    <div class="heading">
-      <h1>Cars Favourited</h1>
-    </div>
-    <div class="car-cards">
-      <ul class="cars-lst">
-        <li v-for="car in cars" :key="car.id">
-          <div class="car-card">
-            <div class="photo">
-              <img
-                :src="'http://localhost:9090/uploads/' + car.photo"
-                alt="car"
-              />
-            </div>
-            <div class="car-info">
-              <div>
-                <span class="name-and-price">
-                  <p class="year-and-make">{{ car.year + " " + car.make }}</p>
-                  <span class="car-price">
-                    <img class="tags" src="../assets/tag.svg" alt="tag" />
-                    <p>${{ car.price }}</p>
-                  </span>
-                </span>
-                <p class="car-model">{{ car.model }}</p>
+      <div class="heading">
+        <h1>Cars Favourited</h1>
+      </div>
+      <div class="car-cards">
+        <ul class="cars-lst">
+          <li v-for="car in cars" :key="car.id">
+            <div class="car-card">
+              <div class="photo">
+                <img
+                  :src="'http://localhost:9090/uploads/' + car.photo"
+                  alt="car"
+                />
               </div>
+              <div class="car-info">
+                <div>
+                  <span class="name-and-price">
+                    <p class="year-and-make">{{ car.year + " " + car.make }}</p>
+                    <span class="car-price">
+                      <img class="tags" src="../assets/tag.svg" alt="tag" />
+                      <p>${{ car.price }}</p>
+                    </span>
+                  </span>
+                  <p class="car-model">{{ car.model }}</p>
+                </div>
+              </div>
+              <button @click="getCar(car.id)" class="btn-details">
+                View More Details
+              </button>
             </div>
-            <button @click="getCar(car.id)" class="btn-details">
-              View More Details
-            </button>
-          </div>
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
+import { authHeader } from "../services/headers.service";
+
 export default {
   name: "UserComponent",
   created() {
     let self = this;
+    let token = authHeader().Authorization;
+    let id = window.location.pathname.replace("/users/", "");
+    self.param = id;
 
-    fetch("http://localhost:9090/api/users/2/favourites")
+    function parseJWT(t) {
+      var base64Url = t.split(".")[1];
+      var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      var jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function(c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+
+      return JSON.parse(jsonPayload);
+    }
+    self.uid = parseJWT(token).id;
+
+    fetch(`http://localhost:9090/api/users/${id}/favourites`, {
+      headers: authHeader(),
+    })
       .then(function(response) {
         return response.json();
       })
       .then(function(data) {
-        console.log(data);
         if (!data.message) {
           self.cars = data;
+        }
+      });
+    fetch(`http://localhost:9090/api/users/${id}`, {
+      headers: authHeader(),
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        if (!data.message) {
+          self.user = data;
         }
       });
   },
   data() {
     return {
       cars: [],
+      user: {},
+      uid: String,
+      param: String,
     };
   },
   methods: {
@@ -276,5 +307,17 @@ export default {
   width: 150px;
   object-fit: cover;
   align-self: flex-start;
+}
+.hidden {
+  display: none;
+}
+#user-page.hidden {
+  display: none;
+}
+#no-access {
+  color: black;
+  margin: 20px;
+  padding: 0 10px;
+  font-size: 32px;
 }
 </style>
