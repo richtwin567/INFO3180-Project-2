@@ -58,6 +58,11 @@ const routes = [
     path: "/users/:id",
     name: "UserPage",
     component: UserPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/cars/new",
     name: "AddNewCarPage",
     component: AddNewCarPage,
