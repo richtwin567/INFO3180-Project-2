@@ -6,6 +6,7 @@ from functools import wraps
 # Flask imports
 from flask import json, request, jsonify, g, make_response, abort, render_template
 from operator import and_
+from flask.helpers import send_from_directory
 from sqlalchemy.orm import query
 from psycopg2 import DatabaseError
 from werkzeug.exceptions import HTTPException
@@ -241,6 +242,12 @@ def get_favourite_cars(user_id):
             return jsonify({"message": "No favourites found"}), 404
     else:
         return jsonify({"message": "users only have access to their own favourites"}), 401
+
+@app.route("/api/uploads/<filename>")
+def get_image(filename):
+    root_dir = os.getcwd()
+    print(send_from_directory(os.path.join(root_dir,app.config['UPLOAD_FOLDER']),filename))
+    return send_from_directory(os.path.join(root_dir,app.config['UPLOAD_FOLDER']),filename)
 
 
 @app.after_request

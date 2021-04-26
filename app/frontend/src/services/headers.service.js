@@ -2,7 +2,7 @@
  * Generates the Authorization header for each request
  */
 export function authHeader() {
-  let accessToken = JSON.parse(localStorage.getItem("jwt"));
+  let accessToken = localStorage.getItem("jwt");
 
   if (accessToken) {
     return { Authorization: "Bearer " + accessToken };

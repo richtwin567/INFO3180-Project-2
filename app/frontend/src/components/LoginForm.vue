@@ -41,8 +41,8 @@ export default {
         // Store the JWT
         authService.handleLogin(data);
 
-        // Redirect to home
-        this.$router.push("/");
+        // Redirect to explore
+        window.location.href = "/explore";
       }
       console.log(data);
     },

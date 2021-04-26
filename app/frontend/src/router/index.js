@@ -3,6 +3,8 @@ import Home from "@/views/Home.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import RegistrationPage from "@/views/RegistrationPage.vue";
 import ExplorePage from "@/views/ExplorePage.vue";
+import CarPage from "@/views/CarPage.vue";
+import UserPage from "@/views/UserPage.vue";
 import AddNewCarPage from "@/views/AddNewCarPage.vue";
 
 const routes = [
@@ -40,6 +42,22 @@ const routes = [
     path: "/explore",
     name: "ExplorePage",
     component: ExplorePage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/cars/:id",
+    name: "CarPage",
+    component: CarPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/users/:id",
+    name: "UserPage",
+    component: UserPage,
     meta: {
       requiresAuth: true,
     },
