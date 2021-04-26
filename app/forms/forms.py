@@ -43,9 +43,6 @@ class NewCarForm(FlaskForm):
     colour = StringField(validators=[DataRequired()])
     year = StringField(validators=[DataRequired()])
     price = DecimalField(validators=[DataRequired()])
-
-    # need to query if these should be enums in the db or frontend decides the options
-
     car_type = StringField(validators=[DataRequired()])
     transmission = StringField(validators=[DataRequired()])
 
