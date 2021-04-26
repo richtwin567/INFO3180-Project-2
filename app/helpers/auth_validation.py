@@ -18,12 +18,12 @@ def validate_email(user_model, email):
     regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 
     if re.search(regex, email) is None:
-        return {'message': f'Invalid email address {email}'}
+        return {'error': f'Invalid email address {email}'}
 
     # Check if a user with the email address already exists
     user = user_model.query.filter_by(email=email).first()
 
     if user is not None:
-        return {'message': f'Email address {email} is already in use'}
+        return {'error': f'Email address {email} is already in use'}
 
     return True
