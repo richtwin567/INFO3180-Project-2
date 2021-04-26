@@ -14,7 +14,9 @@
       </div>
     </section>
     <img
-      src="https://blogs.forbes.com/samabuelsamid/files/2018/11/Small-Audi-e-tron-GT-concept-5118.jpg"
+      :src="
+        'https://blogs.forbes.com/samabuelsamid/files/2018/11/Small-Audi-e-tron-GT-concept-5118.jpg'
+      "
       alt="car"
     />
   </main>
