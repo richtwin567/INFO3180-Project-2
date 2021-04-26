@@ -29,6 +29,12 @@ python3 server.py
 Step 4:
 Navigate to localhost:8080 to view the application
 
+# Deployment
+
+## Important
+
+When making changes to the vue frontend in `frontend/`, ensure that `yarn build` is run before pushing to the repository, otherwise the frontend will not be updated on heroku, as flask serves the vue.js frontend from the `dist/` directory in `frontend/`
+
 # Development
 
 ## Project Structure
