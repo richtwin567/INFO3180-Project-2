@@ -77,7 +77,7 @@ def login():
             }), 200)
     else:
         return make_response(
-            {'message': 'Incorrect password'},
+            {'error': 'Incorrect password'},
             401
         )
 
@@ -121,7 +121,7 @@ def register():
         # If a user or email address is found, a 401 is sent to the client
         if username_check is not None:
             return make_response(
-                {'message': f'Username {username} already exists'}, 401)
+                {'error': f'Username {username} already exists'}, 401)
 
         elif email_check is not True:
             return make_response(email_check, 401)
@@ -158,7 +158,7 @@ def register():
 
             }, 201)
     else:
-        return jsonify({"message": form.errors}), 500
+        return jsonify({"errors": form.errors}), 500
 
 
 @auth_route.route("/api/auth/logout", methods=["POST"])

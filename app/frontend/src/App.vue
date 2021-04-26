@@ -15,7 +15,7 @@
         </div>
       </div>
       <div :class="uid.length == 0 ? 'hidden' : ''">
-        <router-link to="/">Logout</router-link>
+        <router-link to="/" @click="logout">Logout</router-link>
       </div>
       <div :class="uid.length == 0 ? '' : 'hidden'">
         <router-link to="/login">Login</router-link>
@@ -27,35 +27,32 @@
 </template>
 
 <script>
-import { authHeader } from "./services/headers.service";
+import * as authService from "@/services/auth.service.js";
+import { authHeader } from "@/services/headers.service";
+
 export default {
   name: "App",
   created() {
     let self = this;
     console.log(self.uid.length);
     let token = authHeader().Authorization;
-    function parseJWT(t) {
-      var base64Url = t.split(".")[1];
-      var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      var jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map(function(c) {
-            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join("")
-      );
 
-      return JSON.parse(jsonPayload);
-    }
     if (token) {
-      self.uid = parseJWT(token).id;
+      self.uid = authService.parseJWT(token).id;
     }
   },
   data() {
     return {
       uid: "",
     };
+  },
+  methods: {
+    logout() {
+      authService.handleLogout();
+
+      // Refresh page to updatenav
+      window.location.href = "/";
+    },
   },
 };
 </script>
@@ -117,6 +114,19 @@ body {
   color: #42b983;
 }
 
+.error {
+  color: #ca4148;
+  background-color: #ffbaba;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 95%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ca4148;
+  text-align: center;
+  margin-top: 10px;
+}
 .hidden {
   display: none;
 }

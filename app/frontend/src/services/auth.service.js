@@ -77,7 +77,7 @@ export async function register(formData) {
     });
 }
 
-export async function logout() {
+export async function handleLogout() {
   // Remove the JWT
   localStorage.removeItem("jwt");
 
@@ -97,7 +97,7 @@ export async function handleResponse(response) {
     if (!response.ok) {
       if (response.status === 401) {
         // Auto logout if 401 response returned from api
-        logout();
+        handleLogout();
       }
 
       const error = (data && data.message) || response.statusText;
@@ -106,4 +106,23 @@ export async function handleResponse(response) {
 
     return data;
   });
+}
+
+/**
+ * Parses the JSON Web Token
+ * @param {string} t
+ */
+export function parseJWT(t) {
+  var base64Url = t.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function(c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
 }
