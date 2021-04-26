@@ -47,6 +47,9 @@
       <div class="form-field">
         <button type="submit" id="register-btn">Register</button>
       </div>
+      <div v-if="error" class="error">
+        {{ error }}
+      </div>
     </form>
   </section>
 </template>

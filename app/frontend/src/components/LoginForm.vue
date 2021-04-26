@@ -58,20 +58,6 @@ form {
   justify-content: center;
 }
 
-.error {
-  color: #ca4148;
-  background-color: #ffbaba;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 95%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ca4148;
-  text-align: center;
-  margin-top: 10px;
-}
-
 #login-form-container {
   background: #ffffff;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);

@@ -29,4 +29,18 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.error {
+  color: #ca4148;
+  background-color: #ffbaba;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 95%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ca4148;
+  text-align: center;
+  margin-top: 10px;
+}
 </style>
