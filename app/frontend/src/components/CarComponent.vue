@@ -1,6 +1,6 @@
 <template>
   <div class="main-car">
-    <img :src="'http://localhost:9090/uploads/' + car.photo" alt="" />
+    <img :src="API_ENDPOINT + '/uploads/' + car.photo" alt="" />
     <div id="car-page">
       <div>
         <h2>{{ car.year + " " + car.make }}</h2>
@@ -48,6 +48,7 @@ import { authHeader } from "../services/headers.service.js";
 export default {
   name: "ExploreComponent",
   created() {
+    const API_ENDPOINT = "http://localhost:9090/api";
     let self = this;
     let id = window.location.pathname.replace("/cars/", "");
 
@@ -69,7 +70,7 @@ export default {
     }
     self.uid = parseJWT(token).id;
 
-    fetch(`http://localhost:9090/api/cars/${id}`, {
+    fetch(API_ENDPOINT + `/cars/${id}`, {
       headers: authHeader(),
     })
       .then(function(response) {
@@ -81,7 +82,7 @@ export default {
           self.pic_src = "../../../../uploads/" + data.photo;
         }
       });
-    fetch(`http://localhost:9090/api/users/${self.uid}/favourites`, {
+    fetch(API_ENDPOINT + `/users/${self.uid}/favourites`, {
       headers: authHeader(),
     })
       .then(function(response) {
@@ -105,14 +106,16 @@ export default {
       isFavourite: false,
       pic_src: String,
       uid: String,
+      API_ENDPOINT: "http://localhost:9090/api",
     };
   },
   methods: {
     setFave() {
       let self = this;
+      const API_ENDPOINT = "http://localhost:9090/api";
 
       if (!self.isFavourite) {
-        fetch(`http://localhost:9090/api/cars/${self.car.id}/favourite`, {
+        fetch(API_ENDPOINT + `/cars/${self.car.id}/favourite`, {
           headers: authHeader(),
           method: "POST",
         })

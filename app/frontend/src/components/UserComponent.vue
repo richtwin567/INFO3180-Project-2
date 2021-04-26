@@ -6,7 +6,7 @@
     <div :class="param == uid ? '' : 'hidden'" id="user-page">
       <div class="user-card">
         <div class="profile-img">
-          <img :src="'http://localhost:9090/uploads/' + user.photo" alt="" />
+          <img :src="API_ENDPOINT + '/uploads/' + user.photo" alt="" />
         </div>
         <div>
           <h1>{{ user.name }}</h1>
@@ -34,10 +34,7 @@
           <li v-for="car in cars" :key="car.id">
             <div class="car-card">
               <div class="photo">
-                <img
-                  :src="'http://localhost:9090/uploads/' + car.photo"
-                  alt="car"
-                />
+                <img :src="API_ENDPOINT + '/uploads/' + car.photo" alt="car" />
               </div>
               <div class="car-info">
                 <div>
@@ -64,6 +61,7 @@
 
 <script>
 import { authHeader } from "../services/headers.service";
+const API_ENDPOINT = "http://localhost:9090/api";
 
 export default {
   name: "UserComponent",
@@ -89,7 +87,7 @@ export default {
     }
     self.uid = parseJWT(token).id;
 
-    fetch(`http://localhost:9090/api/users/${id}/favourites`, {
+    fetch(API_ENDPOINT + `/users/${id}/favourites`, {
       headers: authHeader(),
     })
       .then(function(response) {
@@ -100,7 +98,7 @@ export default {
           self.cars = data;
         }
       });
-    fetch(`http://localhost:9090/api/users/${id}`, {
+    fetch(API_ENDPOINT + `/users/${id}`, {
       headers: authHeader(),
     })
       .then(function(response) {
@@ -118,6 +116,7 @@ export default {
       user: {},
       uid: String,
       param: String,
+      API_ENDPOINT: "http://localhost:9090/api",
     };
   },
   methods: {

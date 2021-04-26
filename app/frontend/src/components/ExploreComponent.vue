@@ -34,10 +34,7 @@
         <li v-for="car in currentCars" :key="car.id">
           <div class="car-card">
             <div class="photo">
-              <img
-                :src="'http://localhost:9090/uploads/' + car.photo"
-                alt="car"
-              />
+              <img :src="API_ENDPOINT + '/uploads/' + car.photo" alt="car" />
             </div>
             <div class="car-info">
               <div>
@@ -63,11 +60,12 @@
 
 <script>
 import { authHeader } from "../services/headers.service";
+const API_ENDPOINT = "http://localhost:9090/api";
 export default {
   name: "ExploreComponent",
   created() {
     let self = this;
-    fetch("http://localhost:9090/api/cars", {
+    fetch(API_ENDPOINT + "/cars", {
       headers: authHeader(),
     })
       .then(function(response) {
@@ -91,6 +89,7 @@ export default {
       currentCars: [],
       searchTermModel: "",
       searchTermMake: "",
+      API_ENDPOINT: "http://localhost:9090/api",
     };
   },
   methods: {

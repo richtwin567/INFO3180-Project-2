@@ -243,7 +243,7 @@ def get_favourite_cars(user_id):
     else:
         return jsonify({"message": "users only have access to their own favourites"}), 401
 
-@app.route("/uploads/<filename>")
+@app.route("/api/uploads/<filename>")
 def get_image(filename):
     root_dir = os.getcwd()
     print(send_from_directory(os.path.join(root_dir,app.config['UPLOAD_FOLDER']),filename))
