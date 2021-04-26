@@ -13,12 +13,7 @@
         <a href="/login" class="login-btn">Login</a>
       </div>
     </section>
-    <img
-      :src="
-        'https://blogs.forbes.com/samabuelsamid/files/2018/11/Small-Audi-e-tron-GT-concept-5118.jpg'
-      "
-      alt="car"
-    />
+    <img src="@/assets/banner.jpg" alt="car" />
   </main>
 </template>
 
@@ -78,7 +73,7 @@ p {
 }
 .reg-btn {
   margin-right: 5px;
-  background: rgb(0, 183, 255);
+  background: #00b7ff;
   border: none;
   width: 120px;
   border-radius: 5px;
@@ -87,11 +82,18 @@ p {
 }
 .login-btn {
   margin-right: 5px;
-  background: rgb(0, 214, 125);
+  background: #00d67d;
   border: none;
   width: 120px;
   border-radius: 5px;
   color: #ffffff;
   padding: 12px 25px;
+}
+
+.reg-btn:hover {
+  background: #0c93c9;
+}
+.login-btn:hover {
+  background: #0e9b6c;
 }
 </style>
