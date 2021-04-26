@@ -9,7 +9,7 @@
           </span>
         </router-link>
         <div :class="uid.length == 0 ? 'hidden' : ''">
-          <router-link to="/">Add Car</router-link>
+          <router-link to="/cars/new">Add Car</router-link>
           <router-link to="/explore">Explore</router-link>
           <router-link :to="{ path: '/users/' + uid }">My Profile</router-link>
         </div>
