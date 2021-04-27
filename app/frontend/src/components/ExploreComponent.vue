@@ -89,7 +89,7 @@ export default {
       currentCars: [],
       searchTermModel: "",
       searchTermMake: "",
-      API_ENDPOINT: "http://localhost:9090/api",
+      API_ENDPOINT: "https://united-auto-sales.herokuapp.com/api",
     };
   },
   methods: {
