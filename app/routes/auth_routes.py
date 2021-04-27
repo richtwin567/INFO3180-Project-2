@@ -161,7 +161,7 @@ def register():
         return jsonify({"errors": form.errors}), 500
 
 
-@auth_route.route("/api/auth/logout", methods=["POST"])
+@auth_route.route("/logout", methods=["POST"])
 @token_required
 def logout():
     """Log a user out.

@@ -82,7 +82,7 @@ export async function handleLogout() {
   localStorage.removeItem("jwt");
 
   // Retrieve response from server
-  return axios.post(`${API_ENDPOINT}/logout`, {}).then((response) => {
+  return axios.post(`${API_ENDPOINT}/auth/logout`, {}).then((response) => {
     return response.data;
   });
 }

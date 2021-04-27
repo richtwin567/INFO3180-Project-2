@@ -216,6 +216,12 @@ export default {
   left: 50%;
   transform: translateX(-50%);
 }
+
+.btn-details:hover {
+  cursor: pointer;
+  background: rgb(13, 96, 129);
+}
+
 .btn-search {
   margin-right: 5px;
   background: rgb(1, 201, 118);
@@ -225,6 +231,11 @@ export default {
   color: #ffffff;
   padding: 8px 25px;
   margin-left: 10px;
+}
+
+.btn-search:hover {
+  cursor: pointer;
+  background: rgb(28, 161, 106);
 }
 
 .name-and-price {

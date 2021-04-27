@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="car-btns">
-        <a href="/login" class="login-btn">Email Owner</a>
+        <a class="login-btn">Email Owner</a>
         <button @click="setFave" class="fave">
           <img
             :class="isFavourite ? 'hidden' : ''"
@@ -236,6 +236,13 @@ p {
   padding: 12px 25px;
 }
 
+.login-btn:hover {
+  cursor: not-allowed;
+}
+
+.fave:hover {
+  cursor: pointer;
+}
 .hidden {
   display: none;
 }
