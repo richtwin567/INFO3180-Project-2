@@ -1,5 +1,5 @@
-import axios from "axios";
-// import { CSRFHeader } from "@/services/headers.service.js";
+//import axios from "axios";
+import { authHeader } from "@/services/headers.service";
 
 const API_ENDPOINT = "http://localhost:9090/api";
 
@@ -78,12 +78,18 @@ export async function register(formData) {
 }
 
 export async function handleLogout() {
-  // Remove the JWT
-  localStorage.removeItem("jwt");
+  // Generate the Bearer Header
+  let header = authHeader();
 
   // Retrieve response from server
-  return axios.post(`${API_ENDPOINT}/auth/logout`, {}).then((response) => {
-    return response.data;
+  return fetch(`${API_ENDPOINT}/auth/logout`, {
+    method: "POST",
+    headers: {
+      Authorization: header.Authorization,
+    },
+    body: {},
+  }).then((response) => {
+    return response.json;
   });
 }
 
