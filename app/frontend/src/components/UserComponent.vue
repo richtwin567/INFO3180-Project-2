@@ -116,7 +116,7 @@ export default {
       user: {},
       uid: String,
       param: String,
-      API_ENDPOINT: "http://localhost:9090/api",
+      API_ENDPOINT: "https://united-auto-sales.herokuapp.com/api",
     };
   },
   methods: {
