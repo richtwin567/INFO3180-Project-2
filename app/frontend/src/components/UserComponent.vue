@@ -248,6 +248,10 @@ export default {
   transform: translateX(-50%);
 }
 
+.btn-details:hover {
+  background: rgb(15, 110, 148);
+  cursor: pointer;
+}
 .name-and-price {
   display: flex;
   align-items: center;
