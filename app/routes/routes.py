@@ -30,8 +30,6 @@ from app.database.serializers import (
     CarsSerializer
 )
 from app.routes.decorators import token_required
-
-# should be removed when api testing is complete
 from flask_wtf.csrf import generate_csrf
 
 
@@ -60,9 +58,7 @@ def handle_cars():
         else:
             return jsonify({"message": "No cars in the database"}), 404
     else:
-        form = NewCarForm()
-        # should be deleted
-        # form.csrf_token.data = generate_csrf()
+        form = NewCarForm(meta={'csrf': False})
         if form.validate_on_submit():
 
             try:
@@ -93,14 +89,14 @@ def handle_cars():
                 db.session.commit()
                 return jsonify({"message": "The car was added successfully"}), 201
             except Exception as e:
-                return jsonify({"message": str(e)}), 500
+                print(str(e))
+                return jsonify({"errors":[{"field":"", "messages":[str(e)]}]}), 500
         else:
 
             # if validation fails send the errors
             errs = []
             for field, err in form.errors.items():
                 errs += [{"field": field, "messages": err}]
-
             return jsonify({"message": "Invalid form data", "errors": errs}), 400
 
 
@@ -308,7 +304,6 @@ def index(path):
     """
     print(app.static_folder)
     return app.send_static_file("index.html")
-
 
 @app.errorhandler(404)
 def not_found(e):

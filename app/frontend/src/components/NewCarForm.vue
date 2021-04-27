@@ -1,5 +1,14 @@
 <template>
 	<section id="new-car-form-container">
+		<div class="flashes">
+			<div
+				v-for="flash in flashes"
+				v-bind:class="flash.className"
+				v-bind:key="flash.message"
+			>
+				{{ flash.message }}
+			</div>
+		</div>
 		<form
 			@submit.prevent="handleSubmit"
 			method="POST"
@@ -29,12 +38,18 @@
 				</div>
 				<div class="form-field">
 					<label for="year">Year</label>
-					<input id="year" type="text" required v-model="year" pattern="[0-9]{4}"/>
+					<input
+						id="year"
+						type="text"
+						required
+						v-model="year"
+						pattern="[0-9]{4}"
+					/>
 				</div>
 			</article>
 			<article class="form-fields">
 				<div class="form-field">
-					<label for="price">Location</label>
+					<label for="price">Price</label>
 					<input
 						id="price"
 						type="number"
@@ -43,20 +58,20 @@
 						required
 						v-model="price"
 					/>
-					<div class="form-field">
-						<label for="car_type">Car Type</label>
-						<select id="car_type" required v-model="car_type">
-							<option>SUV</option>
-							<option>Sedan</option>
-							<option>Coupe</option>
-							<option>Sports Car</option>
-							<option>Hatchback</option>
-							<option>Convertible</option>
-							<option>Station Wagon</option>
-							<option>Minivan</option>
-							<option>Pickup Truck</option>
-						</select>
-					</div>
+				</div>
+				<div class="form-field">
+					<label for="car_type">Car Type</label>
+					<select id="car_type" required v-model="car_type">
+						<option>SUV</option>
+						<option>Sedan</option>
+						<option>Coupe</option>
+						<option>Sports Car</option>
+						<option>Hatchback</option>
+						<option>Convertible</option>
+						<option>Station Wagon</option>
+						<option>Minivan</option>
+						<option>Pickup Truck</option>
+					</select>
 				</div>
 			</article>
 			<div class="form-field">
@@ -103,15 +118,16 @@ export default {
 	// Keeps track of component state
 	data() {
 		return {
-			make:"",
-            model :"",
-            colour:"",
-            year:"",
-            price:0,
-            car_type:"",
-            transmission:"",
-            description:"",
+			make: "",
+			model: "",
+			colour: "",
+			year: "",
+			price: 0,
+			car_type: "",
+			transmission: "",
+			description: "",
 			photo: "",
+			flashes: [],
 		};
 	},
 	methods: {
@@ -120,19 +136,17 @@ export default {
 		},
 		async handleSubmit(e) {
 			e.preventDefault();
-
 			// Destructure form fields from state
 			const formObj = {
-                
-			make: this.make,
-            model : this.model,
-            colour:this.colour,
-            year:this.year,
-            price:this.price,
-            car_type:this.car_type,
-            transmission:this.transmission,
-            description:this.description,
-			photo: this.photo,
+				make: this.make,
+				model: this.model,
+				colour: this.colour,
+				year: this.year,
+				price: this.price,
+				car_type: this.car_type,
+				transmission: this.transmission,
+				description: this.description,
+				photo: this.photo,
 			};
 
 			// Create the form data object
@@ -142,16 +156,27 @@ export default {
 				formData.append(field, formObj[field]);
 			}
 
-			for (var value of formData.values()) {
-				console.log(value);
-			}
+			console.log(formData);
 			// Register the user
 			let data = await carService.addNewCar(formData);
-
+			console.log(data);
 			// Display errors if found
-			if (data.error) {
-				console.log(data.error);
-				this.error = data.error;
+			this.flashes = [];
+			if (Object.keys(data).includes("errors")) {
+				data.errors.forEach((err) => {
+					var errFlashes = err.messages.map((message) => {
+						return {
+							message: `${err.field} - ${message}`,
+							className: "alert alert-danger",
+						};
+					});
+					this.flashes.push(...errFlashes);
+				});
+			} else {
+				this.flashes.push({
+					message: "Car added successfully",
+					className: "alert alert-success",
+				});
 			}
 		},
 	},
@@ -171,7 +196,8 @@ export default {
 	width: 90%;
 }
 .form-field input,
-.form-field textarea {
+.form-field textarea,
+.form-field select {
 	display: block;
 	padding: 10px 15px;
 	margin: 10px 0px;
@@ -211,5 +237,25 @@ export default {
 #new-car-btn:hover {
 	cursor: pointer;
 	background: #0a7753;
+}
+
+.alert {
+	position: relative;
+	padding: 0.75rem 1.25rem;
+	margin-bottom: 1rem;
+	border: 1px solid transparent;
+	border-radius: 0.25rem;
+}
+
+.alert-danger {
+	color: #721c24;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
+}
+
+.alert-success {
+	color: #155724;
+	background-color: #d4edda;
+	border-color: #c3e6cb;
 }
 </style>
