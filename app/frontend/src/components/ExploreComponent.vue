@@ -60,7 +60,7 @@
 
 <script>
 import { authHeader } from "../services/headers.service";
-const API_ENDPOINT = "http://localhost:9090/api";
+const API_ENDPOINT = "https://united-auto-sales.herokuapp.com/api";
 export default {
   name: "ExploreComponent",
   created() {

@@ -48,7 +48,7 @@ import { authHeader } from "../services/headers.service.js";
 export default {
   name: "ExploreComponent",
   created() {
-    const API_ENDPOINT = "http://localhost:9090/api";
+    const API_ENDPOINT = "https://united-auto-sales.herokuapp.com/api";
     let self = this;
     let id = window.location.pathname.replace("/cars/", "");
 
@@ -112,7 +112,7 @@ export default {
   methods: {
     setFave() {
       let self = this;
-      const API_ENDPOINT = "http://localhost:9090/api";
+      const API_ENDPOINT = "https://united-auto-sales.herokuapp.com/api";
 
       if (!self.isFavourite) {
         fetch(API_ENDPOINT + `/cars/${self.car.id}/favourite`, {
