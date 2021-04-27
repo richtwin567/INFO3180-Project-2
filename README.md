@@ -27,7 +27,7 @@ python3 server.py
 ```
 
 Step 4:
-Navigate to localhost:8080 to view the application
+Navigate to `localhost:9090/` to view the application
 
 # Development
 
