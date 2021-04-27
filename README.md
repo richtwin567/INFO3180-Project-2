@@ -54,3 +54,7 @@ This approach was done to allow for the project to be easily developed with SFCS
 When making changes to the vue frontend in `frontend/`, ensure that `yarn build` is run before pushing to the repository, otherwise the frontend will not be updated on heroku, as flask serves the vue.js frontend from the `dist/` directory in `frontend/`
 
 However for development, the frontend can be run with `yarn serve`
+
+## Using Heroku for data storage
+
+If you would rather to test the Frontend with the instance of the application on heroku, switch to the `heroku-endpoints` branch, where all of the API endpoints have been set to the corresponding heroku endpoints
